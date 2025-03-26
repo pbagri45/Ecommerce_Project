@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  namespace :users do
+    get "registrations/new"
+    get "registrations/create"
+  end
   get "checkouts/create"
   get "orders/new"
   get "orders/create"
