@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "products/index"
+  get "products/show"
   get "pages/home"
   get "pages/about"
   get "pages/contact"
