@@ -1,2 +1,54 @@
-<h1>Products#show</h1>
-<p>Find me in app/views/products/show.html.erb</p>
+<div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to 'Home', root_path %></li>
+      <li class="breadcrumb-item"><%= link_to 'Products', products_path %></li>
+      <li class="breadcrumb-item active" aria-current="page"><%= @product.name %></li>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <div class="col-md-6">
+      <%= image_tag @product.image.variant(resize: "500x500"), class: "img-fluid" if @product.image.attached? %>
+    </div>
+    <div class="col-md-6">
+      <h1><%= @product.name %></h1>
+      <% if @product.on_sale? %>
+        <span class="badge bg-danger">Sale</span>
+      <% end %>
+      
+      <p class="lead"><%= number_to_currency(@product.current_price) %></p>
+      
+      <div class="mb-4">
+        <h4>Description</h4>
+        <p><%= @product.description %></p>
+      </div>
+      
+      <%= form_with url: add_to_cart_product_path(@product), method: :post do |f| %>
+        <div class="input-group mb-3" style="max-width: 200px">
+          <%= f.number_field :quantity, value: 1, min: 1, class: "form-control" %>
+          <%= f.submit "Add to Cart", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+      
+      <div class="mt-4">
+        <h4>Categories</h4>
+        <% @product.categories.each do |category| %>
+          <%= link_to category.name, category_path(category), class: "badge bg-info text-decoration-none me-1" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  
+  <% if @related_products.any? %>
+    <hr class="my-5">
+    <h3>Related Products</h3>
+    <div class="row">
+      <% @related_products.each do |product| %>
+        <div class="col-lg-3 col-md-4 col-6 mb-4">
+          <%= render 'products/product_card', product: product %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

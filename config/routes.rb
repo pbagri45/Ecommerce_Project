@@ -1,52 +1,39 @@
 Rails.application.routes.draw do
-  namespace :users do
-    get "sessions/new"
-    get "sessions/create"
-    get "sessions/destroy"
-    get "registrations/new"
-    get "registrations/create"
-  end
-  get "checkouts/create"
-  get "orders/new"
-  get "orders/create"
-  get "orders/show"
-  get "orders/index"
-  get "carts/show"
-  get "carts/update"
-  get "carts/destroy"
-  get "categories/show"
-  get "products/index"
-  get "products/show"
+  # Devise routes
+  devise_for :users
+  devise_for :admin_users, ActiveAdmin::Devise.config
+  
+  # ActiveAdmin routes
+  ActiveAdmin.routes(self)
+  
+  # Health check route
+  get "up", to: "rails/health#show", as: :rails_health_check
+  
+  # PWA routes
+  get "service-worker", to: "rails/pwa#service_worker", as: :pwa_service_worker
+  get "manifest", to: "rails/pwa#manifest", as: :pwa_manifest
+  
+  # Static pages
   get "pages/home"
   get "pages/about"
   get "pages/contact"
-  devise_for :users
-  devise_for :admin_users, ActiveAdmin::Devise.config
-  ActiveAdmin.routes(self)
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+  # Products and cart routes
+  resources :products, only: [:index, :show] do
+    post 'add_to_cart', on: :member
+  end
+  resource :cart, only: [:show, :update, :destroy]
 
-  # Render dynamic PWA files from app/views/pwa/*
-  get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-  get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
+  # Orders and checkout
+  resources :orders, only: [:new, :create, :show, :index]
+  post 'checkout', to: 'checkouts#create'
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  # Admin namespace
+  namespace :admin do
+    resources :products
+    resources :orders, only: [:index, :show, :update]
+  end
+
+  # Define root path (update this as per your app's main page)
+  root "pages#home"
 end
-
-resources :products, only: [:index, :show] do
-  post 'add_to_cart', on: :member
-end
-
-resource :cart, only: [:show, :update, :destroy]
-resources :orders, only: [:new, :create, :show, :index]
-
-namespace :admin do
-  resources :products
-  resources :orders, only: [:index, :show, :update]
-end
-
-post 'checkout', to: 'checkouts#create

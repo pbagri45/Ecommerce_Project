@@ -1,2 +1,23 @@
-<h1>Pages#home</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - Green Valley Organics</title>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+
+</head>
+<body>
+  <header>
+    <nav>
+      <%= link_to "Home", root_path %>
+      <%= link_to "About", pages_about_path %>
+      <%= link_to "Contact", pages_contact_path %>
+    </nav>
+  </header>
+  <main>
+    <h1>Welcome to Green Valley Organics!</h1>
+    <p>Your go-to place for fresh organic produce.</p>
+  </main>
+</body>
+</html>

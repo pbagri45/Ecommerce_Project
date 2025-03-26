@@ -1,2 +1,97 @@
-<h1>Orders#new</h1>
-<p>Find me in app/views/orders/new.html.erb</p>
+<div class="container mt-4">
+  <h1 class="mb-4">Checkout</h1>
+  
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5>Shipping Information</h5>
+        </div>
+        <div class="card-body">
+          <%= form_with model: @order, url: orders_path, local: true do |f| %>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <%= f.label :shipping_name, "Full Name", class: "form-label" %>
+                <%= f.text_field :shipping_name, class: "form-control", 
+                    value: current_user.name, required: true %>
+              </div>
+              
+              <div class="col-md-6">
+                <%= f.label :shipping_address, "Address", class: "form-label" %>
+                <%= f.text_field :shipping_address, class: "form-control", 
+                    value: current_user.address, required: true %>
+              </div>
+              
+              <div class="col-md-4">
+                <%= f.label :shipping_city, "City", class: "form-label" %>
+                <%= f.text_field :shipping_city, class: "form-control", 
+                    value: current_user.city, required: true %>
+              </div>
+              
+              <div class="col-md-4">
+                <%= f.label :province_id, "Province", class: "form-label" %>
+                <%= f.select :province_id, options_from_collection_for_select(@provinces, "id", "name", current_user.province_id), 
+                    { include_blank: "Select Province" }, { class: "form-select", required: true } %>
+              </div>
+              
+              <div class="col-md-4">
+                <%= f.label :shipping_postal_code, "Postal Code", class: "form-label" %>
+                <%= f.text_field :shipping_postal_code, class: "form-control", 
+                    value: current_user.postal_code, required: true %>
+              </div>
+            </div>
+        </div>
+      </div>
+      
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5>Payment Information</h5>
+        </div>
+        <div class="card-body">
+          <div id="card-element" class="mb-3"></div>
+          <div id="card-errors" role="alert" class="text-danger"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h5>Order Summary</h5>
+        </div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush mb-3">
+            <% @cart_items.each do |item| %>
+              <li class="list-group-item d-flex justify-content-between">
+                <span><%= item[:product].name %> × <%= item[:quantity] %></span>
+                <span><%= number_to_currency(item[:total]) %></span>
+              </li>
+            <% end %>
+            
+            <li class="list-group-item d-flex justify-content-between bg-light">
+              <span>Subtotal</span>
+              <span><%= number_to_currency(@subtotal) %></span>
+            </li>
+            
+            <li class="list-group-item d-flex justify-content-between bg-light">
+              <span>Taxes (Calculated at checkout)</span>
+              <span>—</span>
+            </li>
+            
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Total</strong>
+              <strong><%= number_to_currency(@subtotal) %></strong>
+            </li>
+          </ul>
+          
+          <%= f.hidden_field :stripe_token, id: "stripe_token" %>
+          <%= f.submit "Place Order", class: "btn btn-primary w-100", id: "submit-button" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= javascript_include_tag "https://js.stripe.com/v3/" %>
+<%= javascript_pack_tag 'checkout' %>
