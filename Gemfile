@@ -62,5 +62,5 @@ end
 gem "devise", "~> 4.9"
 gem "activeadmin", "~> 3.3"
 gem "kaminari", "~> 1.2"
-gem "stripe", "~> 13.5"
+gem "stripe", "~> 14.0"
 gem "ransack", "~> 4.3"
